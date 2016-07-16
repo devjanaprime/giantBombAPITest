@@ -4,30 +4,55 @@
     <meta charset="utf-8">
     <title>Giant Bomb Test</title>
     <script src="vendors/angular.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="vendors/bootstrap.min.css" media="screen" title="no title" charset="utf-8">
     <script src="scripts/script.js" charset="utf-8"></script>
   </head>
   <body>
     <h1>Giant Bomb Test</h1>
-    <button type="button" name="button">Search</button><button type="button" name="button">Favorites</button>
     <div ng-controller='giantBombController'>
-      <div id='favoritesPanel'>
-        <div ng-repeat='favorites in allFavorites'>
-          <h2>{{ favorites.name }}</h2>
-          <img ng-src='{{ favorites.image.thumb_url }}' /><br />
-          <button type="button" name="button" ng-click='removeFromFavorites( $index );'>Remove</button>
-          {{ favorites.deck }}
+      <button ng-click='pageState( 0 );'>Played</button>
+      <button ng-click='pageState( 2 );'>Wishlist</button>
+      <button ng-click='pageState( 1 );'>Search</button>
+      <div id='playedPanel' ng-show="played">
+      <h2>Played Games:</h2>
+        <div class='container'>
+          <div class="row">
+            <div  class="col-xs-2 letter-box" ng-repeat='played in allPlayed'>
+              <img class="img-thumbnail" ng-src='{{ played.image.thumb_url }}' /><br />
+              <div ng-show='played.devRating'>D Rating:{{ played.devRating }}</div>
+              <div ng-show='!played.devRating'>D Rate:<br /><button ng-click='rate( 0, $index, 0 );'>0</button><button ng-click='rate( 0, $index, 1 );'>1</button><button ng-click='rate( 0, $index, 2 );'>2</button><button ng-click='rate( 0, $index, 3 );'>3</button><button ng-click='rate( 0, $index, 4 );'>4</button><button ng-click='rate( 0, $index, 5 );'>5</button></div>
+              <div ng-show='played.krystalRating'>K Rating: {{ played.krystalRating }}</div>
+              <div ng-show='!played.krystalRating'>K Rate:<br /><button ng-click='rate( 1, $index, 0 );'>0</button><button ng-click='rate( 1, $index, 1 );'>1</button><button ng-click='rate( 1, $index, 2 );'>2</button><button ng-click='rate( 1, $index, 3 );'>3</button><button ng-click='rate( 1, $index, 4 );'>4</button><button ng-click='rate( 1, $index, 5 );'>5</button></div>
+            </div>
           </div>
+        </div>
       </div>
-      <hr />
-      <div id='searchPanel'>
+      <div id='searchPanel' ng-show="search">
         <input type="text" ng-model='searchString' value="" placeholder="Search for...">
         <button ng-click='findGame()'>Search</button><button  ng-click='clearSearch()'>Clear</button>
-        <div ng-repeat='result in allResults'>
-          <h2>{{ result.name }}</h2>
-          <img ng-src='{{ result.image.thumb_url }}' /><br />
-          <button type="button" name="button" ng-click='addToFavorites( $index );'>Favorite</button><br />
-          {{ result.deck }}
+        <h2>Search Results:</h2>
+        <div class='container'>
+          <div class="row">
+            <div  class="col-s-3 letter-box" ng-repeat='result in allResults'>
+              <img ng-src='{{ result.image.thumb_url }}' /><br />
+              <button type="button" name="button" ng-click='addToPlayed( 0, $index );'>Played</button><br />
+              <button type="button" name="button" ng-click='addToWishlist( $index );'>Wishlist</button><br />
+              {{ result.deck }}
+            </div>
           </div>
+        </div>
+      </div>
+      <div id='wishlistPanel' ng-show="wishlist">
+      <h2>Wish List:</h2>
+        <div class='container'>
+          <div class="row">
+            <div  class="col-xs-2 letter-box" ng-repeat='wanted in allWishlist'>
+              <img class="img-thumbnail" ng-src='{{ wanted.image.thumb_url }}' /><br />
+              <button type="button" name="button" ng-click='addToPlayed( 1, $index );'>Played</button><br />
+              <button type="button" name="button" ng-click='removeFromWishlist( $index );'>Remove</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </body>
