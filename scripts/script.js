@@ -14,14 +14,29 @@ myApp.controller( 'giantBombController', [ '$scope', '$http', function( $scope, 
     console.log( 'in addToPlayed', fromList, index );
     if( fromList == 0 ){
       // from search
-      $scope.allPlayed.push( $scope.allResults[ index ] );
-      $scope.allResults.splice( index, 1 );
+      console.log( 'gb_index: ' + $scope.allResults[ index ].id );
+      var addURL = 'http://devjana.net/gameTest/add_game.php?id=' + $scope.allResults[ index ].id + "&status=1";
+      $http({
+        method: 'GET',
+        url: addURL
+      }).then( function( response ){
+        console.log( 'back from http:', response );
+        $scope.allResults.splice( index, 1 );
+      });
     }
     else if( fromList == 1 ){
       //from wishlist
-      $scope.allPlayed.push( $scope.allWishlist[ index ] );
-      $scope.allWishlist.splice( index, 1 );
+      console.log( 'gb_index: ' + $scope.allResults[ index ].id );
+      var addURL = 'http://devjana.net/gameTest/add_game.php?id=' + $scope.allResults[ index ].id + "&status=0";
+      $http({
+        method: 'GET',
+        url: addURL
+      }).then( function( response ){
+        console.log( 'back from http:', response );
+        $scope.allWishlist.splice( index, 1 );
+      });
     }
+    console.log( $scope.allPlayed );
   };
 
   $scope.addToWishlist = function( index ){
@@ -48,6 +63,29 @@ myApp.controller( 'giantBombController', [ '$scope', '$http', function( $scope, 
       for( var i=0; i< response.data.results.length; i++ ){
         $scope.allResults.push( response.data.results[ i ] );
       }; // end for
+      console.log( $scope.allResults );
+    });
+  };
+
+  $scope.getGame = function( gameId ){
+    console.log( 'in getGame: ', gameId );
+    var gameURL = 'http://www.giantbomb.com/api/game/' + gameId + '/?api_key=' + apiKey + '&format=json';
+    $http({
+      method: 'GET',
+      url: gameURL
+    }).then( function( response ){
+      $scope.allPlayed.push( response.data.results )
+      console.log( $scope.allPlayed  );
+    });
+  };
+  $scope.getGames = function( status ){
+    console.log( 'in getGames: ', status );
+    var gameURL = 'http://devjana.net/gameTest/get_games.php?status=' + status;
+    $http({
+      method: 'GET',
+      url: gameURL
+    }).then( function( response ){
+      console.log( 'back grom get:', response );
     });
   };
 
